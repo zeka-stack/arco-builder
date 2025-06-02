@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Inherit from parent project -->
+    <parent>
+        <groupId>dev.dong4j</groupId>
+        <artifactId>arco-distribution-parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <!-- Project coordinates -->
+    <artifactId>arco-doc-distribution</artifactId>
+    <packaging>pom</packaging>
+
+    <!-- Project metadata -->
+    <name>Arco Doc Distribution</name>
+    <description>一键部署项目知识库的父依赖</description>
+
+    <build>
+        <pluginManagement>
+        </pluginManagement>
+
+        <plugins>
+        </plugins>
+    </build>
+</project>

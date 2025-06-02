@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Inherit from parent project -->
+    <parent>
+        <groupId>dev.dong4j</groupId>
+        <artifactId>arco-supreme</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <!-- 因为 arco-supreme 是另一个 git 项目, 因此这里使用如下配置, 表示: 无本地路径，直接从仓库获取 -->
+        <relativePath/>
+    </parent>
+
+    <!-- Project coordinates -->
+    <artifactId>arco-builder</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+
+    <!-- Project metadata -->
+    <name>Arco Builder</name>
+    <description>Arco Builder</description>
+    <url>https://github.com/zeka-stack/arco-builder</url>
+    <inceptionYear>2025</inceptionYear>
+
+    <!-- Organization -->
+    <organization>
+        <name>Zeka Stack Inc.</name>
+        <url>https://github.com/zeka-stack</url>
+    </organization>
+
+    <!-- License -->
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/license/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <!-- Developers -->
+    <developers>
+        <developer>
+            <id>dong4j</id>
+            <name>dong4j</name>
+            <email>dong4j@gmail.com</email>
+            <organization>Zeka.Stack</organization>
+            <organizationUrl>https://github.com/zeka-stack</organizationUrl>
+            <roles>
+                <role>designer</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <!-- SCM (Source Control Management) -->
+    <scm>
+        <url>https://github.com/zeka-stack/arco-builder</url>
+        <connection>scm:git:https://github.com/zeka-stack/arco-builder.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/zeka-stack/arco-builder.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <!-- Issue tracking -->
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/zeka-stack/arco-builder/issues</url>
+    </issueManagement>
+
+    <!-- CI/CD system -->
+    <ciManagement>
+        <system>GitHub Actions</system>
+        <url>https://github.com/zeka-stack/arco-builder/actions</url>
+    </ciManagement>
+
+    <!-- Contributors (optional) -->
+    <contributors>
+        <contributor>
+            <name>dong4j</name>
+            <email>dong4j@gmail.com</email>
+            <url>https://github.com/dong4j</url>
+            <organization>Zeka.Stack</organization>
+            <roles>
+                <role>maintainer</role>
+            </roles>
+        </contributor>
+    </contributors>
+
+    <!-- Project modules -->
+    <modules>
+        <module>arco-dependencies-parent</module>
+        <module>arco-distribution-parent</module>
+    </modules>
+
+    <!-- Project properties -->
+    <properties>
+        <revision>0.0.1-SNAPSHOT</revision>
+    </properties>
+</project>

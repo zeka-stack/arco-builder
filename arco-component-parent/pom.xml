@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Inherit from parent project -->
+    <parent>
+        <groupId>dev.dong4j</groupId>
+        <artifactId>arco-project-builder</artifactId>
+        <version>${revision}</version>
+        <relativePath>../arco-project-builder/pom.xml</relativePath>
+    </parent>
+
+    <!-- Project coordinates -->
+    <artifactId>arco-component-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <!-- Project metadata -->
+    <name>Arco Component Parent</name>
+    <description>框架组件型父依赖</description>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <filtering>true</filtering>
+                <excludes>
+                    <!--排除 jrebel 配置文件 -->
+                    <exclude>rebel.xml</exclude>
+                    <exclude>.rebel.xml.bak</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <!--排除 jrebel 配置文件-->
+                    <exclude>rebel.xml</exclude>
+                    <exclude>.rebel.xml.bak</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>package-source</id>
+            <build>
+                <plugins>
+
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

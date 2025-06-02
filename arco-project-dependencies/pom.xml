@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Inherit from parent project -->
+    <parent>
+        <groupId>dev.dong4j</groupId>
+        <artifactId>arco-dependencies-parent</artifactId>
+        <version>${revision}</version>
+        <relativePath>../arco-dependencies-parent/pom.xml</relativePath>
+    </parent>
+
+    <!-- Project coordinates -->
+    <artifactId>arco-project-dependencies</artifactId>
+    <packaging>pom</packaging>
+
+    <!-- Project metadata -->
+    <name>Arco Project Dependencies</name>
+    <description>框架对第三方依赖的管理, 仅限于版本定义</description>
+
+    <!-- Project modules -->
+    <modules>
+        <module>../arco-project-builder</module>
+    </modules>
+
+    <!-- 统一管理第三方依赖版本 -->
+    <properties>
+
+    </properties>
+
+    <!-- 统一管理依赖 -->
+    <dependencyManagement>
+
+    </dependencyManagement>
+</project>
