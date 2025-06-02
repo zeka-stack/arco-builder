@@ -19,7 +19,7 @@
 
     <!-- Project metadata -->
     <name>Arco Dependencies Parent</name>
-    <description>Arco Dependencies Parent</description>
+    <description>依赖管理</description>
 
     <!-- Project modules -->
     <modules>

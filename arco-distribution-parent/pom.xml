@@ -19,7 +19,7 @@
 
     <!-- Project metadata -->
     <name>Arco Distribution Parent</name>
-    <description>Arco Distribution Parent</description>
+    <description>分发管理</description>
 
     <!-- Project modules -->
     <modules>
