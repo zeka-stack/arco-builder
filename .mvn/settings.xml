@@ -3,17 +3,27 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
-    <pluginGroups>
-        <pluginGroup>io.github.atom</pluginGroup>
-        <pluginGroup>org.springframework.boot</pluginGroup>
-    </pluginGroups>
+    <servers>
+        <!-- 公共仓库 -->
+        <server>
+            <id>central</id>
+            <username>${env.MVN_CENTRAL_USERNAME}</username>
+            <password>${env.MVN_CENTRAL_PASSWORD}</password>
+        </server>
 
-    <mirrors>
-        <mirror>
-            <id>aliyunmaven</id>
-            <mirrorOf>*</mirrorOf>
-            <name>阿里云公共仓库</name>
-            <url>https://maven.aliyun.com/repository/public</url>
-        </mirror>
-    </mirrors>
+        <!-- 私服 snapshots -->
+        <server>
+            <id>snapshots</id>
+            <username>${env.MVN_PRIVATE_USERNAME}</username>
+            <password>${env.MVN_PRIVATE_PASSWORD}</password>
+        </server>
+        <!-- 私服 releases -->
+        <server>
+            <id>releases</id>
+            <username>${env.MVN_PRIVATE_USERNAME}</username>
+            <password>${env.MVN_PRIVATE_PASSWORD}</password>
+        </server>
+    </servers>
+
 </settings>
+
