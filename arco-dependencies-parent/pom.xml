@@ -19,7 +19,7 @@
 
     <!-- Project metadata -->
     <name>Arco Dependencies Parent</name>
-    <description>依赖管理</description>
+    <description>Zeka.Stack 顶级依赖管理</description>
 
     <!-- Project modules -->
     <modules>

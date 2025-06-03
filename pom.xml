@@ -59,7 +59,7 @@
     <scm>
         <url>https://github.com/zeka-stack/arco-builder</url>
         <connection>scm:git:https://github.com/zeka-stack/arco-builder.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/zeka-stack/arco-builder.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:zeka-stack/arco-builder.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
