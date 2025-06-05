@@ -31,14 +31,344 @@
 
     <!-- Project properties -->
     <properties>
+        <global.version>0.0.1-SNAPSHOT</global.version>
+        <arco-processor.version>${global.version}</arco-processor.version>
+        <acro-maven-plugin.version>${global.version}</acro-maven-plugin.version>
+        <blen-dependencies.version>${global.version}</blen-dependencies.version>
+        <cubo-dependencies.version>${global.version}</cubo-dependencies.version>
+        <!-- 业务端可覆写此配置 -->
+
+        <git-commit-id-plugin.version>2.2.6</git-commit-id-plugin.version>
+        <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
+        <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
+
+        <maven-antrun-plugin.version>3.0.0</maven-antrun-plugin.version>
+        <maven-checkstyle-plugin.version>3.1.1</maven-checkstyle-plugin.version>
+        <maven-pmd-plugin.version>3.13.0</maven-pmd-plugin.version>
+
+        <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+        <p3c-pmd.version>2.0.1</p3c-pmd.version>
 
     </properties>
 
     <dependencies>
-
+        <!-- lombok 插件, 简化代码 (在 package 阶段排除) -->
+        <!-- <dependency> -->
+        <!--     <groupId>org.projectlombok</groupId> -->
+        <!--     <artifactId>lombok</artifactId> -->
+        <!--     &lt;!&ndash; 使用 arco-supreme 中的版本, 如果不加 version 将使用 spring-boot-dependencies 的依赖版本 &ndash;&gt; -->
+        <!--     <version>${lombok.version}</version> -->
+        <!--     <scope>provided</scope> -->
+        <!-- </dependency> -->
+        <!-- idea 提供的用于编译时检查 null 的工具包 (在 package 阶段排除) -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- 生成元数据依赖, 用于生成 spring.factories, 打包配置文件, 处理指定的 annotation. (在 package 阶段排除) -->
+        <!-- todo-dong4j : (2025.06.5 22:09) [添加注解处理器] -->
     </dependencies>
 
     <build>
+        <!-- 插件依赖定义及配置 -->
+        <pluginManagement>
+            <plugins>
+                <!--region git-commit-id-plugin-->
+                <!-- 用于生成 git.properties -->
+                <plugin>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                    <version>${git-commit-id-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>get-the-git-infos</id>
+                            <goals>
+                                <goal>revision</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>validate-the-git-infos</id>
+                            <goals>
+                                <goal>validateRevision</goal>
+                            </goals>
+                            <phase>package</phase>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <!-- https://github.com/git-commit-id/maven-git-commit-id-plugin/issues/315 -Dmaven.gitcommitid.skip=true -->
+                        <skip>false</skip>
+                        <!-- 使 properties 扩展到整个maven bulid 周期
+                        Ref: https://github.com/ktoso/maven-git-commit-id-plugin/issues/280 -->
+                        <injectAllReactorProjects>true</injectAllReactorProjects>
+                        <dateFormat>yyyy.MM.dd HH:mm:ss</dateFormat>
+                        <verbose>true</verbose>
+                        <!-- 是否生成 git.properties 属性文件 -->
+                        <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                        <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                        <!-- 不是 git 项目时, 不失败 -->
+                        <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                        <commitIdGenerationMode>full</commitIdGenerationMode>
+                        <!--git描述配置,可选;由JGit提供实现;-->
+                        <gitDescribe>
+                            <skip>false</skip>
+                            <!--提交操作未发现tag时,仅打印提交操作ID,-->
+                            <always>false</always>
+                            <!--提交操作ID显式字符长度,最大值为:40;默认值:7; 0代表特殊意义; -->
+                            <abbrev>7</abbrev>
+                            <!--构建触发时,代码有修改时(即"dirty state"),添加指定后缀;默认值:"";-->
+                            <dirty>-dirty</dirty>
+                            <!--
+                                always print using the "tag-commits_from_tag-g_commit_id-maybe_dirty" format, even if "on" a tag.
+                                The distance will always be 0 if you're "on" the tag.
+                            -->
+                            <forceLongFormat>false</forceLongFormat>
+                            <tags>true</tags>
+                        </gitDescribe>
+                    </configuration>
+                </plugin>
+                <!--endregion-->
 
+                <!--region maven-compiler-plugin 重写 arco-supreme 配置 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <!-- http://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html -->
+                        <compilerArgs>
+                            <arg>-Xlint:all,-classfile,-rawtypes,-unchecked,-deprecation,-processing</arg>
+                        </compilerArgs>
+                        <encoding>${project.encoding}</encoding>
+                        <parameters>true</parameters>
+                        <showDeprecation>true</showDeprecation>
+                        <showWarnings>true</showWarnings>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <!-- See https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html -->
+                        <!-- Classpath elements to supply as annotation processor path. If specified, the compiler   -->
+                        <!-- will detect annotation processors only in those classpath elements. If omitted, the     -->
+                        <!-- default classpath is used to detect annotation processors. The detection itself depends -->
+                        <!-- on the configuration of annotationProcessors.                                           -->
+                        <!--                                                                                         -->
+                        <!-- According to this documentation, the provided dependency processor is not considered!   -->
+                        <!-- https://github.com/mapstruct/mapstruct/issues/2338 -->
+                        <!-- https://juejin.cn/post/7099874296373182478 -->
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <!-- mapstruct 注解处理器 (在 package 阶段排除) -->
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
+                            </path>
+                            <!-- 生成元数据依赖, 用于生成 spring.factories, server.sh, 打包配置文件, 处理指定的 annotation. (在 package 阶段排除) -->
+                            <!-- todo-dong4j : (2025.06.5 22:08) [添加插件] -->
+                            <!-- lombok 1.18.16之后，添加path，必须使用 lombok-mapstruct-binding 插件 -->
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok-mapstruct-binding</artifactId>
+                                <version>${lombok-mapstruct-binding.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                    <inherited>true</inherited>
+                </plugin>
+                <!--endregion-->
+
+                <!--region maven-checkstyle-plugin-->
+                <!-- http://maven.apache.org/plugins/maven-checkstyle-plugin/index.html -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven-checkstyle-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>checkstyle-validation</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <!-- todo-dong4j : (2025.06.5 22:35) [完善插件后删除标记] -->
+                        <skip>true</skip>
+                        <logViolationsToConsole>true</logViolationsToConsole>
+                        <configLocation>zeka-stack-checks.xml</configLocation>
+                        <suppressionsLocation>suppressions.xml</suppressionsLocation>
+                        <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <consoleOutput>true</consoleOutput>
+                        <failOnViolation>true</failOnViolation>
+                        <cacheFile>${project.build.directory}/checkstyle/checkstyle-cachefile</cacheFile>
+                        <outputFile>${project.build.directory}/checkstyle/checkstyle-result.xml</outputFile>
+                        <rulesFiles>${project.build.directory}/checkstyle/checkstyle-rules.xml</rulesFiles>
+                        <linkXRef>false</linkXRef>
+                        <includes>dev/dong4j\/**\/*.java</includes>
+                        <includeResources>false</includeResources>
+                        <includeTestResources>false</includeTestResources>
+                        <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                    </configuration>
+                    <dependencies>
+                        <!-- todo-dong4j : (2025.06.5 21:49) [自定义插件] -->
+                    </dependencies>
+                </plugin>
+                <!--endregion-->
+
+                <!--region maven-pmd-plugin-->
+                <!-- http://maven.apache.org/plugins/maven-pmd-plugin/index.html -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${maven-pmd-plugin.version}</version>
+                    <configuration>
+                        <!-- 在父项目中聚合 -->
+                        <!--<aggregate>true</aggregate>-->
+                        <skipEmptyReport>true</skipEmptyReport>
+                        <rulesets>
+                            <!-- todo-dong4j : (2025.06.5 21:54) [自定义规则] -->
+                        </rulesets>
+                        <printFailingErrors>true</printFailingErrors>
+                        <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+                        <targetJdk>${java.version}</targetJdk>
+                        <linkXRef>false</linkXRef>
+                        <verbose>true</verbose>
+                        <includes>dev/dong4j\/**\/*.java</includes>
+                    </configuration>
+                    <executions>
+                        <!-- 绑定 pmd:check 到 verify 生命周期 -->
+                        <execution>
+                            <id>validate</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                        <!-- 绑定 pmd:pmd 到 site 生命周期 -->
+                        <execution>
+                            <id>pmd-pmd-site</id>
+                            <phase>site</phase>
+                            <goals>
+                                <goal>pmd</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+
+                    <dependencies>
+                        <!-- 需要使用阿里的一些xml文件, 因此需要这里增加p3c的依赖 -->
+                        <dependency>
+                            <groupId>com.alibaba.p3c</groupId>
+                            <artifactId>p3c-pmd</artifactId>
+                            <version>${p3c-pmd.version}</version>
+                        </dependency>
+                        <!-- todo-dong4j : (2025.06.5 21:53) [自定义插件] -->
+                    </dependencies>
+                </plugin>
+                <!--endregion-->
+
+                <!--region maven-enforcer-plugin-->
+                <!-- 依赖冲突提示 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven-enforcer-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <configuration>
+                                <fail>false</fail>
+                                <!-- todo-dong4j : (2025.06.5 22:11) [添加规则] -->
+                            </configuration>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <id>enforce-versions</id>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <!-- todo-dong4j : (2025.06.5 22:35) [完善插件后删除标记] -->
+                        <skip>true</skip>
+                    </configuration>
+                    <dependencies>
+                        <!-- todo-dong4j : (2025.06.5 21:49) [自定义插件] -->
+                    </dependencies>
+                </plugin>
+                <!--endregion-->
+
+                <!--region maven-antrun-plugin-->
+                <!-- 自定义 ant 任务 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${maven-antrun-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <configuration>
+                                <target>
+                                    <!--suppress UnresolvedMavenProperty -->
+                                    <echo>Git-Infos: ${git.commit.id}</echo>
+                                </target>
+                            </configuration>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                            <phase>package</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!--endregion-->
+
+                <!--region jacoco-maven-plugin-->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                            <id>jacoco-initialize</id>
+                        </execution>
+                        <execution>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                            <id>jacoco-site</id>
+                            <phase>test</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!--endregion-->
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
 </project>
