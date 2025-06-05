@@ -56,7 +56,15 @@
             <id>package-source</id>
             <build>
                 <plugins>
-
+                    <!--
+                        公司可能会规定框架基础组件不提供源码, 所以这里提供一个可选项配置, 如果需要源码, 可以通过 mvn package -P package-source 命令打包源码
+                        而发布到 Maven 公共仓库的模块则必须提供源码, 所以在 arco-supper 模块的 pom.xml 中配置了 maven-source-plugin 插件, 这里继承即可
+                        业务服务中因为使用的 arco-business-parent, 默认不提供源码, 所以比如业务系统对外提供的 SDK 需要源码的话, 则需要手动引入 source 插件
+                        -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
