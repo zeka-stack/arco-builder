@@ -23,9 +23,221 @@
 
     <!-- Project properties -->
     <properties>
+        <!-- 如果是多模块项目, 为需要打包成 zip 的模块重写此配置 -->
+        <package.name>${project.artifactId}</package.name>
+
+        <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
+        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
     </properties>
 
     <build>
+        <!-- 每个模块全部使用当前模块的 artifactId 来命名 -->
+        <finalName>${package.name}</finalName>
 
+        <!-- fkh-framework-build 子模块都会依赖此插件, 但是只有在主 jar 中才会打包, 其他依赖包都会忽略 -->
+        <plugins>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+            </plugin>
+        </plugins>
+        <!-- 插件依赖定义及配置 -->
+        <pluginManagement>
+            <plugins>
+                <!-- 拷贝依赖到 jar 外面的 lib 目录 (maven 为所有项目自动添加此插件, 这里只是覆写 maven 默认配置, 子模块不需要再添加此依赖) -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven-dependency-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>copy-dependencies</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                <overWriteReleases>false</overWriteReleases>
+                                <overWriteSnapshots>false</overWriteSnapshots>
+                                <overWriteIfNewer>true</overWriteIfNewer>
+                                <includeScope>runtime</includeScope>
+                                <excludeArtifactIds>
+                                    <!--region 编译阶段使用的依赖, 不需要被写入到部署包-->
+                                    arco-processor-core,
+                                    arco-processor-annotation,
+                                    lombok,
+                                    annotations,
+                                    spring-boot-autoconfigure-processor,
+                                    spring-boot-configuration-processor,
+                                    mapstruct-processor,
+                                    auto-service-annotations,
+                                    auto-service,
+                                    auto-common,
+                                    spring-boot-devtools,
+                                    checker-qual,
+                                    error_prone_annotations
+                                </excludeArtifactIds>
+                                <excludeGroupIds>
+                                    org.junit.*
+                                </excludeGroupIds>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- 打包成 jar (maven 为所有项目自动添加此插件, 这里只是覆写 maven 默认配置, 子模块不需要再添加此依赖) -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <!-- 编译的 JDK 版本 -->
+                                <Compile-Source-JDK>${java.version}</Compile-Source-JDK>
+                                <Compile-Target-JDK>${java.version}</Compile-Target-JDK>
+                                <Project-Name>${project.build.finalName}</Project-Name>
+                                <Project-Group>dev.dong4j</Project-Group>
+                                <Built-By>${user.name}</Built-By>
+                            </manifestEntries>
+                            <manifest>
+                                <!--suppress UnresolvedMavenProperty (由 arco-assist-maven-plugin:mainclass-property 自动生成)-->
+                                <mainClass>${start.class}</mainClass>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                <!--
+                                    将 lib 增加到构建路径
+                                    todo-dong4j : (2020年05月10日 10:28 下午) [不生成 class-path, 由启动脚本指定 -Dload.path=/path/to/lib]
+                                    需要修改 fkh-boot-loader 模块代码
+                                -->
+                                <addClasspath>true</addClasspath>
+                                <!-- 指定生成的 Manifest 文件中 Class-Path 依赖 lib 前面都加上路径,构建出 lib/xx.jar -->
+                                <classpathPrefix>lib/</classpathPrefix>
+                            </manifest>
+                        </archive>
+                        <!-- 不需要被打包到 jar 中的文件, 如果是自定义配置, 不能使用 application 和 bootstrap 为文件名 -->
+                        <excludes>
+                            <!-- 排除 spring boot 应用的配置文件 -->
+                            <exclude>application*.*</exclude>
+                            <!-- 排除 spring cloud 应用的配置文件 -->
+                            <exclude>bootstrap.*</exclude>
+                            <!-- 排除 jrebel 插件生成的文件 -->
+                            <exclude>rebel.xml</exclude>
+                            <exclude>.rebel.xml.bak</exclude>
+                            <!-- 排除 启动脚本 -->
+                            <exclude>bin/server.sh</exclude>
+                            <!-- 排除打包配置 -->
+                            <exclude>assembly/assembly.xml</exclude>
+                            <!-- 排除业务上需要使用到的文件, 比如密钥文件 (将被打包到 config/includes) -->
+                            <exclude>includes/**</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <!-- 将 properties 文件放入 config 目录下, 将所有依赖打包成 zip, zip名称以时间戳区分 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
+                    <configuration>
+                        <appendAssemblyId>false</appendAssemblyId>
+                        <!-- 由 arco-assist-maven-plugin 插件自动生成到 ./target/arco-plugin/assembly, 避免每个项目手动配置 -->
+                        <descriptors>
+                            <descriptor>${project.build.directory}/arco-plugin/assembly/assembly.xml</descriptor>
+                        </descriptors>
+                        <!--suppress UnresolvedMavenProperty 统一使用模块名(artifactId) -->
+                        <finalName>${project.build.finalName}</finalName>
+                        <!--suppress UnresolvedMavenProperty 由 arco-assist-maven-plugin 插件自动注入 -->
+                        <outputTimestamp>${current.time}</outputTimestamp>
+                        <!-- 没有打包配置时忽略打包 -->
+                        <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>make-assembly</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
+        <!-- 设置 resources 文件, 包括 src/main/java 下的 properties 和 xml, src/main/resources 下的所有文件 -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.yml</include>
+                    <include>**/*.xml</include>
+                    <include>META-INF/**</include>
+                    <!-- seata 配置文件 -->
+                    <include>**/file.conf</include>
+                    <!-- seata 配置文件 -->
+                    <include>**/registry.conf</include>
+                </includes>
+                <filtering>true</filtering>
+                <excludes>
+                    <!--排除 jrebel 配置文件 -->
+                    <exclude>rebel.xml</exclude>
+                    <exclude>.rebel.xml.bak</exclude>
+                    <!-- 排除启动脚本, 打包时迁移到外部目录 -->
+                    <exclude>bin/server.sh</exclude>
+                    <exclude>assembly/assembly.xml</exclude>
+                </excludes>
+            </resource>
+            <!-- src/main/resources/includes 用于业务上需要使用到的文件, 比如密钥, 此目录下所有文件都不会在编译时被修改 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>includes/**</include>
+                    <!-- 前端模板 -->
+                    <include>static/**</include>
+                    <include>templates/**</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <!-- 单元测试时引用src/main/resources 下的资源文件 -->
+            <testResource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>includes/**</include>
+                    <!-- 前端模板 -->
+                    <include>static/**</include>
+                    <include>templates/**</include>
+                </includes>
+                <filtering>false</filtering>
+            </testResource>
+            <!-- src/test/resources/includes 用于业务上需要使用到的文件, 比如密钥, 此目录下所有文件都不会在编译时被修改 -->
+            <testResource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>includes/**</include>
+                    <include>templates/**</include>
+                </includes>
+                <filtering>false</filtering>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.yml</include>
+                    <include>**/*.xml</include>
+                    <include>META-INF/**</include>
+                </includes>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
     </build>
 </project>
