@@ -1,8 +1,6 @@
 ## 依赖关系
 
-该项目是一个典型的 Maven
-多模块项目，各个模块之间通过 [pom.xml](file:///Users/dong4j/Developer/0.Worker/opensource/zeka.stack/arco/arco-builder/pom.xml)
-文件定义了依赖和继承关系。以下是详细的依赖关系：
+多模块项目，各个模块之间通过 [pom.xml](./pom.xml), 文件定义了依赖和继承关系。以下是详细的依赖关系：
 
 ---
 

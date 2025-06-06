@@ -34,7 +34,6 @@
         <!-- 每个模块全部使用当前模块的 artifactId 来命名 -->
         <finalName>${package.name}</finalName>
 
-        <!-- fkh-framework-build 子模块都会依赖此插件, 但是只有在主 jar 中才会打包, 其他依赖包都会忽略 -->
         <plugins>
             <plugin>
                 <groupId>pl.project13.maven</groupId>
@@ -45,6 +44,7 @@
                 <artifactId>maven-assembly-plugin</artifactId>
             </plugin>
         </plugins>
+
         <!-- 插件依赖定义及配置 -->
         <pluginManagement>
             <plugins>
@@ -113,7 +113,7 @@
                                 <!--
                                     将 lib 增加到构建路径
                                     todo-dong4j : (2020年05月10日 10:28 下午) [不生成 class-path, 由启动脚本指定 -Dload.path=/path/to/lib]
-                                    需要修改 fkh-boot-loader 模块代码
+                                    需要修改 arco-boot-loader 模块代码
                                 -->
                                 <addClasspath>true</addClasspath>
                                 <!-- 指定生成的 Manifest 文件中 Class-Path 依赖 lib 前面都加上路径,构建出 lib/xx.jar -->

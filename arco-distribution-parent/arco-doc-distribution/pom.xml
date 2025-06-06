@@ -22,6 +22,7 @@
 
     <build>
         <pluginManagement>
+            <!-- todo-dong4j : (2025.06.5 23:17) [添加自定义插件] -->
         </pluginManagement>
 
         <plugins>
