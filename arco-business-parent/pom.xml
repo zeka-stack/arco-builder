@@ -234,7 +234,7 @@
                     <executions>
                         <execution>
                             <goals>
-                                <!-- dev.dong4j.arco.maven.plugin.container.mojo.DockerfileScriptMojo -->
+                                <!-- dev.dong4j.zeka.maven.plugin.container.mojo.DockerfileScriptMojo -->
                                 <goal>generate-dockerfile</goal>
                             </goals>
                             <id>generate-dockerfile</id>
@@ -243,7 +243,7 @@
                     </executions>
                 </plugin>
 
-                <!-- 统一使用 arco-assist-maven-plugin 插件生成的 assembly.xml 配置文件 dev.dong4j.arco.maven.plugin.helper.mojo.GenerateAssemblyConfigFileMojo-->
+                <!-- 统一使用 arco-assist-maven-plugin 插件生成的 assembly.xml 配置文件 mojo.dev.dong4j.zeka.maven.plugin.helper.GenerateAssemblyConfigFileMojo-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>

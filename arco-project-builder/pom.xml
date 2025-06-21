@@ -67,8 +67,6 @@
             <artifactId>annotations</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- 生成元数据依赖, 用于生成 spring.factories, 打包配置文件, 处理指定的 annotation. (在 package 阶段排除) -->
-        <!-- todo-dong4j : (2025.06.5 22:09) [添加 arco-processor] -->
     </dependencies>
 
     <build>
@@ -194,8 +192,10 @@
                                 <artifactId>mapstruct-processor</artifactId>
                                 <version>${mapstruct.version}</version>
                             </path>
-                            <!-- 生成元数据依赖, 用于生成 spring.factories, server.sh, 打包配置文件, 处理指定的 annotation. (在 package 阶段排除) -->
-                            <!-- todo-dong4j : (2025.06.5 22:08) [添加 arco-processor] -->
+                            <!-- 生成元数据依赖, 用于生成 spring.factories, 打包配置文件, 处理指定的 annotation. (在 package 阶段排除) -->
+                            <groupId>dev.dong4j</groupId>
+                            <artifactId>arco-processor-core</artifactId>
+                            <version>${arco-processor.version}</version>
                             <!-- lombok 1.18.16之后，添加path，必须使用 lombok-mapstruct-binding 插件 -->
                             <path>
                                 <groupId>org.projectlombok</groupId>
@@ -214,14 +214,14 @@
                     <artifactId>arco-assist-maven-plugin</artifactId>
                     <version>${arco-maven-plugin.version}</version>
                     <executions>
-                        <!-- 在 validate 阶段根据当前模块类型禁用部分插件 dev.dong4j.arco.maven.plugin.helper.mojo.SkipPluginMojo -->
+                        <!-- 在 validate 阶段根据当前模块类型禁用部分插件 mojo.dev.dong4j.zeka.maven.plugin.helper.SkipPluginMojo -->
                         <execution>
                             <id>skip-plugin</id>
                             <goals>
                                 <goal>skip-plugin</goal>
                             </goals>
                         </execution>
-                        <!-- 更友好的时间戳 dev.dong4j.arco.maven.plugin.helper.mojo.TimestampPropertyMojo -->
+                        <!-- 更友好的时间戳 mojo.dev.dong4j.zeka.maven.plugin.helper.TimestampPropertyMojo -->
                         <execution>
                             <id>timestamp-property</id>
                             <goals>
@@ -235,7 +235,7 @@
                                 <locale>zh,CN</locale>
                             </configuration>
                         </execution>
-                        <!-- 部署模块配置处理(编译时扫描并找到启动类, 自动注入到 start.class 环境变量中) dev.dong4j.arco.maven.plugin.helper.mojo.StarterMainClassPropertyMojo -->
+                        <!-- 部署模块配置处理(编译时扫描并找到启动类, 自动注入到 start.class 环境变量中) mojo.dev.dong4j.zeka.maven.plugin.helper.StarterMainClassPropertyMojo -->
                         <execution>
                             <id>mainclass-property</id>
                             <goals>
@@ -246,7 +246,7 @@
                                 <name>start.class</name>
                             </configuration>
                         </execution>
-                        <!-- 用于生成 build-info.properties dev.dong4j.arco.maven.plugin.helper.mojo.GenerateProjectBuildInfoMojo -->
+                        <!-- 用于生成 build-info.properties mojo.dev.dong4j.zeka.maven.plugin.helper.GenerateProjectBuildInfoMojo -->
                         <execution>
                             <goals>
                                 <goal>generate-build-info</goal>
@@ -262,28 +262,28 @@
                                 </additionalProperties>
                             </configuration>
                         </execution>
-                        <!-- 注入 profile.active 变量 (local) dev.dong4j.arco.maven.plugin.helper.mojo.SpringProfilesActivePropertyMojo -->
+                        <!-- 注入 profile.active 变量 (local) mojo.dev.dong4j.zeka.maven.plugin.helper.SpringProfilesActivePropertyMojo -->
                         <execution>
                             <id>profile-active-property</id>
                             <goals>
                                 <goal>profile-active-property</goal>
                             </goals>
                         </execution>
-                        <!-- 动态生成 assembly.xml dev.dong4j.arco.maven.plugin.helper.mojo.GenerateAssemblyConfigFileMojo -->
+                        <!-- 动态生成 assembly.xml mojo.dev.dong4j.zeka.maven.plugin.helper.GenerateAssemblyConfigFileMojo -->
                         <execution>
                             <id>generate-assembly-config</id>
                             <goals>
                                 <goal>generate-assembly-config</goal>
                             </goals>
                         </execution>
-                        <!-- 删除 checkstyle pmd 等临时文件 dev.dong4j.arco.maven.plugin.helper.mojo.DeleteTempFileMojo -->
+                        <!-- 删除 checkstyle pmd 等临时文件 mojo.dev.dong4j.zeka.maven.plugin.helper.DeleteTempFileMojo -->
                         <execution>
                             <id>delete-temp-file</id>
                             <goals>
                                 <goal>delete-temp-file</goal>
                             </goals>
                         </execution>
-                        <!-- 正常编译之后生成一个标识文件 dev.dong4j.arco.maven.plugin.helper.mojo.CompiledProcessorMojo -->
+                        <!-- 正常编译之后生成一个标识文件 mojo.dev.dong4j.zeka.maven.plugin.helper.CompiledProcessorMojo -->
                         <execution>
                             <id>generate-compiled-id</id>
                             <goals>
@@ -419,9 +419,9 @@
                                 <fail>false</fail>
                                 <rules>
                                     <dependencyConvergence/>
-                                    <fkhEcforcerRule implementation="dev.dong4j.arco.maven.plugin.enforcer.rule.ArcoEcforcerRule">
+                                    <zekaEcforcerRule implementation="dev.dong4j.zeka.maven.plugin.enforcer.rule.ZekaEcforcerRule">
                                         <shouldIfail>true</shouldIfail>
-                                    </fkhEcforcerRule>
+                                    </zekaEcforcerRule>
                                 </rules>
                             </configuration>
                             <goals>
