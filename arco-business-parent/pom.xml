@@ -36,6 +36,27 @@
 
         <plugins>
             <plugin>
+                <groupId>dev.dong4j</groupId>
+                <artifactId>arco-publish-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>dev.dong4j</groupId>
+                <artifactId>arco-script-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>dev.dong4j</groupId>
+                <artifactId>arco-makeself-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>dev.dong4j</groupId>
+                <artifactId>arco-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>dev.dong4j</groupId>
+                <artifactId>arco-container-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
             </plugin>
@@ -102,7 +123,7 @@
                                 <Compile-Source-JDK>${java.version}</Compile-Source-JDK>
                                 <Compile-Target-JDK>${java.version}</Compile-Target-JDK>
                                 <Project-Name>${project.build.finalName}</Project-Name>
-                                <Project-Group>dev.dong4j</Project-Group>
+                                <Project-Group>${project.groupId}</Project-Group>
                                 <Built-By>${user.name}</Built-By>
                             </manifestEntries>
                             <manifest>
@@ -139,16 +160,99 @@
                     </configuration>
                 </plugin>
 
-                <!-- 将 properties 文件放入 config 目录下, 将所有依赖打包成 zip, zip名称以时间戳区分 -->
+                <plugin>
+                    <groupId>dev.dong4j</groupId>
+                    <artifactId>arco-publish-maven-plugin</artifactId>
+                    <version>${arco-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>publish-single</goal>
+                            </goals>
+                            <id>publish-single</id>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!--
+                    自动生成 server.sh 插件: 如果需要使用项目自己的启动脚本请放到 ${project.basedir}/bin/server.sh
+                    该插件支持启用/禁用开关, configuration 中配置 skip=true
+                    该插件支持自定义 jvm, configuration 中配置 jvmOptions
+                -->
+                <plugin>
+                    <groupId>dev.dong4j</groupId>
+                    <artifactId>arco-script-maven-plugin</artifactId>
+                    <version>${arco-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>generate-server-script</goal>
+                            </goals>
+                            <id>generate-server-script</id>
+                            <phase>package</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- 生成自解压部署包 -->
+                <plugin>
+                    <groupId>dev.dong4j</groupId>
+                    <artifactId>arco-makeself-maven-plugin</artifactId>
+                    <version>${arco-maven-plugin.version}</version>
+                    <configuration>
+                        <!--suppress UnresolvedMavenProperty -->
+                        <archiveDir>${project.build.finalName}</archiveDir>
+                        <fileName>${project.build.finalName}.run</fileName>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>makeself</id>
+                            <goals>
+                                <goal>makeself</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>dev.dong4j</groupId>
+                    <artifactId>arco-boot-maven-plugin</artifactId>
+                    <version>${arco-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jar-repackage</id>
+                            <goals>
+                                <goal>jar-repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>dev.dong4j</groupId>
+                    <artifactId>arco-container-maven-plugin</artifactId>
+                    <version>${arco-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <!-- dev.dong4j.arco.maven.plugin.container.mojo.DockerfileScriptMojo -->
+                                <goal>generate-dockerfile</goal>
+                            </goals>
+                            <id>generate-dockerfile</id>
+                            <phase>package</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- 统一使用 arco-assist-maven-plugin 插件生成的 assembly.xml 配置文件 dev.dong4j.arco.maven.plugin.helper.mojo.GenerateAssemblyConfigFileMojo-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${maven-assembly-plugin.version}</version>
                     <configuration>
                         <appendAssemblyId>false</appendAssemblyId>
-                        <!-- 由 arco-assist-maven-plugin 插件自动生成到 ./target/arco-plugin/assembly, 避免每个项目手动配置 -->
+                        <!-- 由 arco-assist-maven-plugin 插件自动生成到 ./target/arco-maven-plugin/assembly, 避免每个项目手动配置 -->
                         <descriptors>
-                            <descriptor>${project.build.directory}/arco-plugin/assembly/assembly.xml</descriptor>
+                            <descriptor>${project.build.directory}/arco-maven-plugin/assembly/assembly.xml</descriptor>
                         </descriptors>
                         <!--suppress UnresolvedMavenProperty 统一使用模块名(artifactId) -->
                         <finalName>${project.build.finalName}</finalName>

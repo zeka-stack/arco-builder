@@ -5,7 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Inherit from parent project -->
+    <!-- Inherit from a parent project -->
     <parent>
         <groupId>dev.dong4j</groupId>
         <artifactId>arco-supreme</artifactId>

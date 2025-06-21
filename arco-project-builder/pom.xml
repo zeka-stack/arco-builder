@@ -33,7 +33,7 @@
     <properties>
         <global.version>0.0.1-SNAPSHOT</global.version>
         <arco-processor.version>${global.version}</arco-processor.version>
-        <acro-maven-plugin.version>${global.version}</acro-maven-plugin.version>
+        <arco-maven-plugin.version>${global.version}</arco-maven-plugin.version>
         <blen-dependencies.version>${global.version}</blen-dependencies.version>
         <cubo-dependencies.version>${global.version}</cubo-dependencies.version>
         <!-- 业务端可覆写此配置 -->
@@ -68,11 +68,15 @@
             <scope>provided</scope>
         </dependency>
         <!-- 生成元数据依赖, 用于生成 spring.factories, 打包配置文件, 处理指定的 annotation. (在 package 阶段排除) -->
-        <!-- todo-dong4j : (2025.06.5 22:09) [添加注解处理器] -->
+        <!-- todo-dong4j : (2025.06.5 22:09) [添加 arco-processor] -->
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>dev.dong4j</groupId>
+                <artifactId>arco-assist-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -191,7 +195,7 @@
                                 <version>${mapstruct.version}</version>
                             </path>
                             <!-- 生成元数据依赖, 用于生成 spring.factories, server.sh, 打包配置文件, 处理指定的 annotation. (在 package 阶段排除) -->
-                            <!-- todo-dong4j : (2025.06.5 22:08) [添加插件] -->
+                            <!-- todo-dong4j : (2025.06.5 22:08) [添加 arco-processor] -->
                             <!-- lombok 1.18.16之后，添加path，必须使用 lombok-mapstruct-binding 插件 -->
                             <path>
                                 <groupId>org.projectlombok</groupId>
@@ -201,6 +205,92 @@
                         </annotationProcessorPaths>
                     </configuration>
                     <inherited>true</inherited>
+                </plugin>
+                <!--endregion-->
+
+                <!--region arco-assist-maven-plugin-->
+                <plugin>
+                    <groupId>dev.dong4j</groupId>
+                    <artifactId>arco-assist-maven-plugin</artifactId>
+                    <version>${arco-maven-plugin.version}</version>
+                    <executions>
+                        <!-- 在 validate 阶段根据当前模块类型禁用部分插件 dev.dong4j.arco.maven.plugin.helper.mojo.SkipPluginMojo -->
+                        <execution>
+                            <id>skip-plugin</id>
+                            <goals>
+                                <goal>skip-plugin</goal>
+                            </goals>
+                        </execution>
+                        <!-- 更友好的时间戳 dev.dong4j.arco.maven.plugin.helper.mojo.TimestampPropertyMojo -->
+                        <execution>
+                            <id>timestamp-property</id>
+                            <goals>
+                                <goal>timestamp-property</goal>
+                            </goals>
+                            <configuration>
+                                <!-- 可注入到环境变量的时间戳 key -->
+                                <name>current.time</name>
+                                <pattern>MMddHHmm</pattern>
+                                <timeZone>GMT+8</timeZone>
+                                <locale>zh,CN</locale>
+                            </configuration>
+                        </execution>
+                        <!-- 部署模块配置处理(编译时扫描并找到启动类, 自动注入到 start.class 环境变量中) dev.dong4j.arco.maven.plugin.helper.mojo.StarterMainClassPropertyMojo -->
+                        <execution>
+                            <id>mainclass-property</id>
+                            <goals>
+                                <goal>mainclass-property</goal>
+                            </goals>
+                            <configuration>
+                                <!-- 可注入到环境变量的时间戳 key -->
+                                <name>start.class</name>
+                            </configuration>
+                        </execution>
+                        <!-- 用于生成 build-info.properties dev.dong4j.arco.maven.plugin.helper.mojo.GenerateProjectBuildInfoMojo -->
+                        <execution>
+                            <goals>
+                                <goal>generate-build-info</goal>
+                            </goals>
+                            <configuration>
+                                <additionalProperties>
+                                    <encoding.source>${project.encoding}</encoding.source>
+                                    <encoding.reporting>${project.encoding}</encoding.reporting>
+                                    <project.name>${project.build.finalName}</project.name>
+                                    <user.name>${user.name}</user.name>
+                                    <compiler.source.jdk>${java.version}</compiler.source.jdk>
+                                    <compiler.target.jdk>${java.version}</compiler.target.jdk>
+                                </additionalProperties>
+                            </configuration>
+                        </execution>
+                        <!-- 注入 profile.active 变量 (local) dev.dong4j.arco.maven.plugin.helper.mojo.SpringProfilesActivePropertyMojo -->
+                        <execution>
+                            <id>profile-active-property</id>
+                            <goals>
+                                <goal>profile-active-property</goal>
+                            </goals>
+                        </execution>
+                        <!-- 动态生成 assembly.xml dev.dong4j.arco.maven.plugin.helper.mojo.GenerateAssemblyConfigFileMojo -->
+                        <execution>
+                            <id>generate-assembly-config</id>
+                            <goals>
+                                <goal>generate-assembly-config</goal>
+                            </goals>
+                        </execution>
+                        <!-- 删除 checkstyle pmd 等临时文件 dev.dong4j.arco.maven.plugin.helper.mojo.DeleteTempFileMojo -->
+                        <execution>
+                            <id>delete-temp-file</id>
+                            <goals>
+                                <goal>delete-temp-file</goal>
+                            </goals>
+                        </execution>
+                        <!-- 正常编译之后生成一个标识文件 dev.dong4j.arco.maven.plugin.helper.mojo.CompiledProcessorMojo -->
+                        <execution>
+                            <id>generate-compiled-id</id>
+                            <goals>
+                                <goal>generate-compiled-id</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <!--endregion-->
 
@@ -220,8 +310,6 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <!-- todo-dong4j : (2025.06.5 22:35) [完善插件后删除标记] -->
-                        <skip>true</skip>
                         <logViolationsToConsole>true</logViolationsToConsole>
                         <configLocation>zeka-stack-checks.xml</configLocation>
                         <suppressionsLocation>suppressions.xml</suppressionsLocation>
@@ -239,7 +327,11 @@
                         <includeTestSourceDirectory>false</includeTestSourceDirectory>
                     </configuration>
                     <dependencies>
-                        <!-- todo-dong4j : (2025.06.5 21:49) [自定义插件] -->
+                        <dependency>
+                            <groupId>dev.dong4j</groupId>
+                            <artifactId>arco-checkstyle-plugin-rule</artifactId>
+                            <version>${arco-maven-plugin.version}</version>
+                        </dependency>
                     </dependencies>
                 </plugin>
                 <!--endregion-->
@@ -255,7 +347,16 @@
                         <!--<aggregate>true</aggregate>-->
                         <skipEmptyReport>true</skipEmptyReport>
                         <rulesets>
-                            <!-- todo-dong4j : (2025.06.5 21:54) [自定义规则] -->
+                            <ruleset>rulesets/zeka-stack-comment.xml</ruleset>
+                            <ruleset>rulesets/zeka-stack-concurrent.xml</ruleset>
+                            <ruleset>rulesets/zeka-stack-constant.xml</ruleset>
+                            <ruleset>rulesets/zeka-stack-exception.xml</ruleset>
+                            <ruleset>rulesets/zeka-stack-flowcontrol.xml</ruleset>
+                            <ruleset>rulesets/zeka-stack-naming.xml</ruleset>
+                            <ruleset>rulesets/zeka-stack-oop.xml</ruleset>
+                            <ruleset>rulesets/zeka-stack-orm.xml</ruleset>
+                            <ruleset>rulesets/zeka-stack-other.xml</ruleset>
+                            <ruleset>rulesets/zeka-stack-set.xml</ruleset>
                         </rulesets>
                         <printFailingErrors>true</printFailingErrors>
                         <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
@@ -290,7 +391,11 @@
                             <artifactId>p3c-pmd</artifactId>
                             <version>${p3c-pmd.version}</version>
                         </dependency>
-                        <!-- todo-dong4j : (2025.06.5 21:53) [自定义插件] -->
+                        <dependency>
+                            <groupId>dev.dong4j</groupId>
+                            <artifactId>arco-pmd-plugin-rule</artifactId>
+                            <version>${arco-maven-plugin.version}</version>
+                        </dependency>
                     </dependencies>
                 </plugin>
                 <!--endregion-->
@@ -301,11 +406,23 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${maven-enforcer-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>dev.dong4j</groupId>
+                            <artifactId>arco-enforcer-plugin-rule</artifactId>
+                            <version>${arco-maven-plugin.version}</version>
+                        </dependency>
+                    </dependencies>
                     <executions>
                         <execution>
                             <configuration>
                                 <fail>false</fail>
-                                <!-- todo-dong4j : (2025.06.5 22:11) [添加规则] -->
+                                <rules>
+                                    <dependencyConvergence/>
+                                    <fkhEcforcerRule implementation="dev.dong4j.arco.maven.plugin.enforcer.rule.ArcoEcforcerRule">
+                                        <shouldIfail>true</shouldIfail>
+                                    </fkhEcforcerRule>
+                                </rules>
                             </configuration>
                             <goals>
                                 <goal>enforce</goal>
@@ -313,13 +430,6 @@
                             <id>enforce-versions</id>
                         </execution>
                     </executions>
-                    <configuration>
-                        <!-- todo-dong4j : (2025.06.5 22:35) [完善插件后删除标记] -->
-                        <skip>true</skip>
-                    </configuration>
-                    <dependencies>
-                        <!-- todo-dong4j : (2025.06.5 21:49) [自定义插件] -->
-                    </dependencies>
                 </plugin>
                 <!--endregion-->
 
