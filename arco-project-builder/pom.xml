@@ -49,24 +49,52 @@
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <p3c-pmd.version>2.0.1</p3c-pmd.version>
-
+        <mapstruct.version>1.4.2.Final</mapstruct.version>
     </properties>
 
+    <!-- 为所有项目添加基础依赖 -->
     <dependencies>
         <!-- lombok 插件, 简化代码 (在 package 阶段排除) -->
-        <!-- <dependency> -->
-        <!--     <groupId>org.projectlombok</groupId> -->
-        <!--     <artifactId>lombok</artifactId> -->
-        <!--     &lt;!&ndash; 使用 arco-supreme 中的版本, 如果不加 version 将使用 spring-boot-dependencies 的依赖版本 &ndash;&gt; -->
-        <!--     <version>${lombok.version}</version> -->
-        <!--     <scope>provided</scope> -->
-        <!-- </dependency> -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <!-- 使用 arco-supreme 中的版本, 如果不加 version 将使用 spring-boot-dependencies 的依赖版本 -->
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- idea 提供的用于编译时检查 null 的工具包 (在 package 阶段排除) -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- 生成元数据依赖, 用于生成 spring.factories, 打包配置文件, 处理指定的 annotation. (在 package 阶段排除) -->
+        <dependency>
+            <groupId>dev.dong4j</groupId>
+            <artifactId>arco-processor-annotation</artifactId>
+            <version>${arco-processor.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!--region 日志依赖: 业务系统一般会直接使用 spring-boot 的日志组件, 其中包含了 slf4j-api 和 日志实现, 下面 2 个只是为了兼顾 lomkob.Slf4j 注解与单元测试  -->
+        <!-- 用于 @Slf4j 注解 (单元测试时使用) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- 编译期依赖，提供 org.slf4j.Logger 接口，供 @Slf4j 注解生成代码使用 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--endregion-->
     </dependencies>
 
     <build>
@@ -171,15 +199,6 @@
                         <showWarnings>true</showWarnings>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
-                        <!-- See https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html -->
-                        <!-- Classpath elements to supply as annotation processor path. If specified, the compiler   -->
-                        <!-- will detect annotation processors only in those classpath elements. If omitted, the     -->
-                        <!-- default classpath is used to detect annotation processors. The detection itself depends -->
-                        <!-- on the configuration of annotationProcessors.                                           -->
-                        <!--                                                                                         -->
-                        <!-- According to this documentation, the provided dependency processor is not considered!   -->
-                        <!-- https://github.com/mapstruct/mapstruct/issues/2338 -->
-                        <!-- https://juejin.cn/post/7099874296373182478 -->
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.projectlombok</groupId>
@@ -192,10 +211,12 @@
                                 <artifactId>mapstruct-processor</artifactId>
                                 <version>${mapstruct.version}</version>
                             </path>
-                            <!-- 生成元数据依赖, 用于生成 spring.factories, 打包配置文件, 处理指定的 annotation. (在 package 阶段排除) -->
-                            <groupId>dev.dong4j</groupId>
-                            <artifactId>arco-processor-core</artifactId>
-                            <version>${arco-processor.version}</version>
+                            <path>
+                                <!-- 生成元数据依赖, 用于生成 spring.factories, 打包配置文件, 处理指定的 annotation. (在 package 阶段排除) -->
+                                <groupId>dev.dong4j</groupId>
+                                <artifactId>arco-processor-core</artifactId>
+                                <version>${arco-processor.version}</version>
+                            </path>
                             <!-- lombok 1.18.16之后，添加path，必须使用 lombok-mapstruct-binding 插件 -->
                             <path>
                                 <groupId>org.projectlombok</groupId>
