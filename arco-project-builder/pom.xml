@@ -31,11 +31,10 @@
 
     <!-- Project properties -->
     <properties>
-        <global.version>0.0.1-SNAPSHOT</global.version>
         <arco-processor.version>${global.version}</arco-processor.version>
         <arco-maven-plugin.version>${global.version}</arco-maven-plugin.version>
-        <blen-dependencies.version>${global.version}</blen-dependencies.version>
-        <cubo-dependencies.version>${global.version}</cubo-dependencies.version>
+        <blen-kernel-dependencies.version>${global.version}</blen-kernel-dependencies.version>
+        <cubo-boot-dependencies.version>${global.version}</cubo-boot-dependencies.version>
         <!-- 业务端可覆写此配置 -->
 
         <git-commit-id-plugin.version>2.2.6</git-commit-id-plugin.version>
@@ -78,13 +77,6 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!--region 日志依赖: 业务系统一般会直接使用 spring-boot 的日志组件, 其中包含了 slf4j-api 和 日志实现, 下面 2 个只是为了兼顾 lomkob.Slf4j 注解与单元测试  -->
-        <!-- 用于 @Slf4j 注解 (单元测试时使用) -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
 
