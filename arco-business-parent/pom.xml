@@ -52,13 +52,17 @@
                 <artifactId>arco-boot-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>dev.dong4j</groupId>
-                <artifactId>arco-container-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+            </plugin>
+            <!-- assembly 依赖container(根据 properties 判断是否需要生成 lib.xml 和 app.xml) -->
+            <plugin>
+                <groupId>dev.dong4j</groupId>
+                <artifactId>arco-container-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -234,10 +238,18 @@
                     <executions>
                         <execution>
                             <goals>
-                                <!-- dev.dong4j.zeka.maven.plugin.container.mojo.DockerfileScriptMojo -->
+                                <!-- dev.dong4j.zeka.maven.plugin.container.mojo.GenerateDockerfileScriptMojo -->
                                 <goal>generate-dockerfile</goal>
                             </goals>
                             <id>generate-dockerfile</id>
+                            <phase>package</phase>
+                        </execution>
+                        <execution>
+                            <goals>
+                                <!-- dev.dong4j.zeka.maven.plugin.container.mojo.GenerateDockerAssemblyConfigFileMojo -->
+                                <goal>generate-docker-assembly-config</goal>
+                            </goals>
+                            <id>generate-docker-assembly-config</id>
                             <phase>package</phase>
                         </execution>
                     </executions>
@@ -249,6 +261,8 @@
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${maven-assembly-plugin.version}</version>
                     <configuration>
+                        <!-- 避免将 assembly 构建产物（无论是文件还是目录）附加到构建生命周期, 防止错误的 deploy/install 行为 -->
+                        <attach>false</attach>
                         <appendAssemblyId>false</appendAssemblyId>
                         <!-- 由 arco-assist-maven-plugin 插件自动生成到 ./target/arco-maven-plugin/assembly, 避免每个项目手动配置 -->
                         <descriptors>
@@ -344,4 +358,112 @@
             </testResource>
         </testResources>
     </build>
+
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <properties>
+                <dockerfile.skip>false</dockerfile.skip>
+            </properties>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-antrun-plugin</artifactId>
+                            <version>${maven-antrun-plugin.version}</version>
+                            <executions>
+                                <execution>
+                                    <configuration>
+                                        <target>
+                                            <!--suppress UnresolvedMavenProperty -->
+                                            <echo>Git-Infos: ${git.commit.id}</echo>
+                                        </target>
+                                    </configuration>
+                                    <goals>
+                                        <goal>run</goal>
+                                    </goals>
+                                    <phase>package</phase>
+                                </execution>
+                                <execution>
+                                    <id>generate-patch-and-plugin-dir</id>
+                                    <phase>generate-resources</phase>
+                                    <configuration>
+                                        <target>
+                                            <mkdir dir="${project.build.directory}/docker/${project.build.finalName}/patch"/>
+                                            <mkdir dir="${project.build.directory}/docker/${project.build.finalName}/plugin"/>
+                                        </target>
+                                    </configuration>
+                                    <goals>
+                                        <goal>run</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <!-- docker 打包时, 重写 maven-assembly-plugin 配置以完成分层打包 -->
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-assembly-plugin</artifactId>
+                            <version>${maven-assembly-plugin.version}</version>
+                            <configuration>
+                                <appendAssemblyId>false</appendAssemblyId>
+                                <descriptors>
+                                    <descriptor>${project.build.directory}/arco-maven-plugin/assembly/assembly.xml</descriptor>
+                                </descriptors>
+                                <!--suppress UnresolvedMavenProperty 统一使用模块名(artifactId) -->
+                                <finalName>${project.build.finalName}</finalName>
+                                <!--suppress UnresolvedMavenProperty 由 arco-assist-maven-plugin 插件自动注入 -->
+                                <outputTimestamp>${current.time}</outputTimestamp>
+                                <!-- 没有打包配置时忽略打包 -->
+                                <ignoreMissingDescriptor>false</ignoreMissingDescriptor>
+                                <!-- 避免将 assembly 构建产物（无论是文件还是目录）附加到构建生命周期, 防止错误的 deploy/install 行为 -->
+                                <attach>false</attach>
+                            </configuration>
+                            <executions>
+                                <!-- 续输出 tar.gz -->
+                                <execution>
+                                    <id>make-assembly</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>single</goal>
+                                    </goals>
+                                </execution>
+                                <!-- 新增：lib 层输出 -->
+                                <execution>
+                                    <id>lib-layer</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>single</goal>
+                                    </goals>
+                                    <configuration>
+                                        <descriptors>
+                                            <descriptor>${project.build.directory}/arco-maven-plugin/assembly/lib.xml</descriptor>
+                                        </descriptors>
+                                        <appendAssemblyId>false</appendAssemblyId>
+                                        <outputDirectory>${project.build.directory}/docker</outputDirectory>
+                                    </configuration>
+                                </execution>
+
+                                <!-- 新增：app 层输出 -->
+                                <execution>
+                                    <id>app-layer</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>single</goal>
+                                    </goals>
+                                    <configuration>
+                                        <descriptors>
+                                            <descriptor>${project.build.directory}/arco-maven-plugin/assembly/app.xml</descriptor>
+                                        </descriptors>
+                                        <appendAssemblyId>false</appendAssemblyId>
+                                        <outputDirectory>${project.build.directory}/docker</outputDirectory>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>
