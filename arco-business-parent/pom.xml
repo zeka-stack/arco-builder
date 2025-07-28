@@ -155,7 +155,7 @@
                             <exclude>rebel.xml</exclude>
                             <exclude>.rebel.xml.bak</exclude>
                             <!-- 排除 启动脚本 -->
-                            <exclude>bin/server.sh</exclude>
+                            <exclude>bin/launcher</exclude>
                             <!-- 排除打包配置 -->
                             <exclude>assembly/assembly.xml</exclude>
                             <!-- 排除业务上需要使用到的文件, 比如密钥文件 (将被打包到 config/includes) -->
@@ -178,7 +178,7 @@
                     </executions>
                 </plugin>
                 <!--
-                    自动生成 server.sh 插件: 如果需要使用项目自己的启动脚本请放到 ${project.basedir}/bin/server.sh
+                    自动生成 launcher 插件: 如果需要使用项目自己的启动脚本请放到 ${project.basedir}/bin/launcher
                     该插件支持启用/禁用开关, configuration 中配置 skip=true
                     该插件支持自定义 jvm, configuration 中配置 jvmOptions
                 -->
@@ -309,7 +309,7 @@
                     <exclude>rebel.xml</exclude>
                     <exclude>.rebel.xml.bak</exclude>
                     <!-- 排除启动脚本, 打包时迁移到外部目录 -->
-                    <exclude>bin/server.sh</exclude>
+                    <exclude>bin/launcher</exclude>
                     <exclude>assembly/assembly.xml</exclude>
                 </excludes>
             </resource>
