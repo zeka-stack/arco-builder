@@ -58,6 +58,7 @@
             <artifactId>lombok</artifactId>
             <!-- 使用 arco-supreme 中的版本, 如果不加 version 将使用 spring-boot-dependencies 的依赖版本 -->
             <version>${lombok.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- idea 提供的用于编译时检查 null 的工具包 (在 package 阶段排除) -->
         <dependency>
@@ -69,7 +70,7 @@
             <groupId>dev.dong4j</groupId>
             <artifactId>arco-processor-annotation</artifactId>
             <version>${arco-processor.version}</version>
-            <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

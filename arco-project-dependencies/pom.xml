@@ -53,7 +53,7 @@
             </dependency>
             <!--endregion-->
 
-            <!--region Spring Boot Dependencies-->
+            <!--region Spring Boot Dependencies: 做了一些配置优化-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -126,6 +126,21 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+
+            <!--region 不需要被打包到部署包中-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+                <version>${spring-boot-dependencies.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure-processor</artifactId>
+                <version>${spring-boot-dependencies.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!--endregion-->
             <!--endregion-->
 
             <!--region Spring Cloud Dependencies -->
