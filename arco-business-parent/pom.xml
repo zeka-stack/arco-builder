@@ -26,8 +26,8 @@
         <!-- 如果是多模块项目, 为需要打包成 zip 的模块重写此配置 -->
         <package.name>${project.artifactId}</package.name>
 
-        <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
-        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+        <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
+        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
     </properties>
 
     <build>
