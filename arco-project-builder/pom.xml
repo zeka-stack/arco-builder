@@ -42,11 +42,11 @@
         <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
 
         <maven-checkstyle-plugin.version>3.1.1</maven-checkstyle-plugin.version>
-        <maven-pmd-plugin.version>3.13.0</maven-pmd-plugin.version>
+        <maven-pmd-plugin.version>3.21.2</maven-pmd-plugin.version>
 
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
-        <p3c-pmd.version>2.0.1</p3c-pmd.version>
+        <p3c-pmd.version>2.1.1-ext-6</p3c-pmd.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
 
     </properties>
@@ -378,9 +378,10 @@
                     <artifactId>maven-pmd-plugin</artifactId>
                     <version>${maven-pmd-plugin.version}</version>
                     <configuration>
-                        <!-- 在父项目中聚合 -->
-                        <!--<aggregate>true</aggregate>-->
-                        <skipEmptyReport>true</skipEmptyReport>
+                        <includes>dev/dong4j\/**\/*.java</includes>
+                        <excludes>dev/dong4j/kernel/generator\/**\/*.java</excludes>
+                        <linkXRef>false</linkXRef>
+                        <printFailingErrors>true</printFailingErrors>
                         <rulesets>
                             <ruleset>rulesets/zeka-stack-comment.xml</ruleset>
                             <ruleset>rulesets/zeka-stack-concurrent.xml</ruleset>
@@ -393,12 +394,15 @@
                             <ruleset>rulesets/zeka-stack-other.xml</ruleset>
                             <ruleset>rulesets/zeka-stack-set.xml</ruleset>
                         </rulesets>
-                        <printFailingErrors>true</printFailingErrors>
-                        <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+                        <!-- enable incremental analysis -->
+                        <analysisCache>true</analysisCache>
+                        <!-- analysisCacheLocation: optional - points to the following location by default -->
+                        <analysisCacheLocation>${project.build.directory}/pmd/pmd.cache</analysisCacheLocation>
+                        <!-- 在父项目中聚合 -->
+                        <!--<aggregate>true</aggregate>-->
+                        <skipEmptyReport>true</skipEmptyReport>
                         <targetJdk>${java.version}</targetJdk>
-                        <linkXRef>false</linkXRef>
                         <verbose>true</verbose>
-                        <includes>dev/dong4j\/**\/*.java</includes>
                     </configuration>
                     <executions>
                         <!-- 绑定 pmd:check 到 verify 生命周期 -->
@@ -422,7 +426,7 @@
                     <dependencies>
                         <!-- 需要使用阿里的一些xml文件, 因此需要这里增加p3c的依赖 -->
                         <dependency>
-                            <groupId>com.alibaba.p3c</groupId>
+                            <groupId>io.github.godfather1103.p3c</groupId>
                             <artifactId>p3c-pmd</artifactId>
                             <version>${p3c-pmd.version}</version>
                         </dependency>
