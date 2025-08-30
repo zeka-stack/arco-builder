@@ -73,17 +73,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!-- 使用 log4j2 日志框架 (删除所有依赖，在 cubo-logsystem-spring-boot 模块中升级 log4j 版本以修复漏洞) -->
+            <!-- 使用 log4j2 日志框架-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-log4j2</artifactId>
                 <version>${spring-boot-dependencies.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>*</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <!-- 全局排除 spring-boot-starter-logging 内的所有依赖, 避免手动引入造成日志框架冲突 -->
             <dependency>
