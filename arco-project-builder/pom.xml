@@ -200,6 +200,10 @@
                             <!-- 允许访问 jdk.internal.reflect 包（一些框架如 Spring/Hibernate 需要反射调用） -->
                             <arg>--add-exports</arg>
                             <arg>java.base/jdk.internal.reflect=ALL-UNNAMED</arg>
+                            <arg>--add-exports</arg>
+                            <arg>jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                            <arg>--add-exports</arg>
+                            <arg>jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
                         </compilerArgs>
                         <encoding>${project.encoding}</encoding>
                         <parameters>true</parameters>
