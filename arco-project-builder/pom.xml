@@ -146,6 +146,7 @@
                         Ref: https://github.com/ktoso/maven-git-commit-id-plugin/issues/280 -->
                         <injectAllReactorProjects>true</injectAllReactorProjects>
                         <dateFormat>yyyy.MM.dd HH:mm:ss</dateFormat>
+                        <dateFormatTimeZone>UTC</dateFormatTimeZone>
                         <verbose>true</verbose>
                         <!-- 是否生成 git.properties 属性文件 -->
                         <generateGitPropertiesFile>true</generateGitPropertiesFile>
@@ -253,14 +254,14 @@
                     <artifactId>arco-assist-maven-plugin</artifactId>
                     <version>${arco-maven-plugin.version}</version>
                     <executions>
-                        <!-- 在 validate 阶段根据当前模块类型禁用部分插件 mojo.dev.dong4j.zeka.maven.plugin.helper.SkipPluginMojo -->
+                        <!-- 在 validate 阶段根据当前模块类型禁用部分插件 dev.dong4j.zeka.maven.plugin.helper.SkipPluginMojo -->
                         <execution>
                             <id>skip-plugin</id>
                             <goals>
                                 <goal>skip-plugin</goal>
                             </goals>
                         </execution>
-                        <!-- 更友好的时间戳 mojo.dev.dong4j.zeka.maven.plugin.helper.TimestampPropertyMojo -->
+                        <!-- 更友好的时间戳 dev.dong4j.zeka.maven.plugin.helper.TimestampPropertyMojo -->
                         <execution>
                             <id>timestamp-property</id>
                             <goals>
@@ -274,7 +275,7 @@
                                 <locale>zh,CN</locale>
                             </configuration>
                         </execution>
-                        <!-- 部署模块配置处理(编译时扫描并找到启动类, 自动注入到 start.class 环境变量中) mojo.dev.dong4j.zeka.maven.plugin.helper.StarterMainClassPropertyMojo -->
+                        <!-- 部署模块配置处理(编译时扫描并找到启动类, 自动注入到 start.class 环境变量中) dev.dong4j.zeka.maven.plugin.helper.StarterMainClassPropertyMojo -->
                         <execution>
                             <id>mainclass-property</id>
                             <goals>
@@ -285,7 +286,7 @@
                                 <name>start.class</name>
                             </configuration>
                         </execution>
-                        <!-- 用于生成 build-info.properties mojo.dev.dong4j.zeka.maven.plugin.helper.GenerateProjectBuildInfoMojo -->
+                        <!-- 用于生成 build-info.properties dev.dong4j.zeka.maven.plugin.helper.GenerateProjectBuildInfoMojo -->
                         <execution>
                             <goals>
                                 <goal>generate-build-info</goal>
@@ -301,34 +302,42 @@
                                 </additionalProperties>
                             </configuration>
                         </execution>
-                        <!-- 注入 profile.active 变量 (local) mojo.dev.dong4j.zeka.maven.plugin.helper.SpringProfilesActivePropertyMojo -->
+                        <!-- 注入 profile.active 变量 (local) dev.dong4j.zeka.maven.plugin.helper.SpringProfilesActivePropertyMojo -->
                         <execution>
                             <id>profile-active-property</id>
                             <goals>
                                 <goal>profile-active-property</goal>
                             </goals>
                         </execution>
-                        <!-- 动态生成 assembly.xml mojo.dev.dong4j.zeka.maven.plugin.helper.GenerateAssemblyConfigFileMojo -->
+                        <!-- 动态生成 assembly.xml dev.dong4j.zeka.maven.plugin.helper.GenerateAssemblyConfigFileMojo -->
                         <execution>
                             <id>generate-assembly-config</id>
                             <goals>
                                 <goal>generate-assembly-config</goal>
                             </goals>
                         </execution>
-                        <!-- 删除 checkstyle pmd 等临时文件 mojo.dev.dong4j.zeka.maven.plugin.helper.DeleteTempFileMojo -->
+                        <!-- 删除 checkstyle pmd 等临时文件 dev.dong4j.zeka.maven.plugin.helper.DeleteTempFileMojo -->
                         <execution>
                             <id>delete-temp-file</id>
                             <goals>
                                 <goal>delete-temp-file</goal>
                             </goals>
                         </execution>
-                        <!-- 正常编译之后生成一个标识文件 mojo.dev.dong4j.zeka.maven.plugin.helper.CompiledProcessorMojo -->
+                        <!-- 正常编译之后生成一个标识文件 dev.dong4j.zeka.maven.plugin.helper.CompiledProcessorMojo -->
                         <execution>
                             <id>generate-compiled-id</id>
                             <goals>
                                 <goal>generate-compiled-id</goal>
                             </goals>
                         </execution>
+                        <!-- 注入 outputTimestamp.project.version, 由 dev.dong4j.zeka.maven.plugin.helper.mojo.AssemblyOutputTimestampMojo 注入 -->
+                        <execution>
+                            <id>assembly-outputTimestamp-property</id>
+                            <goals>
+                                <goal>assembly-outputTimestamp-property</goal>
+                            </goals>
+                        </execution>
+
                     </executions>
                 </plugin>
                 <!--endregion-->

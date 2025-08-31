@@ -25,7 +25,6 @@
     <properties>
         <!-- 如果是多模块项目, 为需要打包成 zip 的模块重写此配置 -->
         <package.name>${project.artifactId}</package.name>
-
         <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
         <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
     </properties>
@@ -268,10 +267,10 @@
                         <descriptors>
                             <descriptor>${project.build.directory}/arco-maven-plugin/assembly/assembly.xml</descriptor>
                         </descriptors>
-                        <!--suppress UnresolvedMavenProperty 统一使用模块名(artifactId) -->
-                        <finalName>${project.build.finalName}</finalName>
-                        <!--suppress UnresolvedMavenProperty 由 arco-assist-maven-plugin 插件自动注入 -->
-                        <outputTimestamp>${current.time}</outputTimestamp>
+                        <!--suppress UnresolvedMavenProperty 统一使用模块名(artifactId), 读取的是 build.finalName 的配置, 这个配置又使用了 properties.package.name 配置  -->
+                        <finalName>${project.build.finalName}_${current.time}</finalName>
+                        <!--suppress UnresolvedMavenProperty 构建结果可重现的配置, 每个版本应该保持一致(读取 acro-supreme 中的 properties.outputTimestamp 配置, 由 dev.dong4j.zeka.maven.plugin.helper.mojo.AssemblyOutputTimestampMojo 注入) -->
+                        <outputTimestamp>${outputTimestamp.project.version}</outputTimestamp>
                         <!-- 没有打包配置时忽略打包 -->
                         <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
                     </configuration>
@@ -410,10 +409,10 @@
                                 <descriptors>
                                     <descriptor>${project.build.directory}/arco-maven-plugin/assembly/assembly.xml</descriptor>
                                 </descriptors>
-                                <!--suppress UnresolvedMavenProperty 统一使用模块名(artifactId) -->
-                                <finalName>${project.build.finalName}</finalName>
-                                <!--suppress UnresolvedMavenProperty 由 arco-assist-maven-plugin 插件自动注入 -->
-                                <outputTimestamp>${current.time}</outputTimestamp>
+                                <!--suppress UnresolvedMavenProperty 统一使用模块名(artifactId), 读取的是 build.finalName 的配置, 这个配置又使用了 properties.package.name 配置  -->
+                                <finalName>${project.build.finalName}_${current.time}</finalName>
+                                <!--suppress UnresolvedMavenProperty 构建结果可重现的配置, 每个版本应该保持一致(读取 acro-supreme 中的 properties.outputTimestamp 配置) -->
+                                <outputTimestamp>${outputTimestamp.${project.version}}</outputTimestamp>
                                 <!-- 没有打包配置时忽略打包 -->
                                 <ignoreMissingDescriptor>false</ignoreMissingDescriptor>
                                 <!-- 避免将 assembly 构建产物（无论是文件还是目录）附加到构建生命周期, 防止错误的 deploy/install 行为 -->
