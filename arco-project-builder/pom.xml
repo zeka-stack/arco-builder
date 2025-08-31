@@ -337,7 +337,6 @@
                                 <goal>assembly-outputTimestamp-property</goal>
                             </goals>
                         </execution>
-
                     </executions>
                 </plugin>
                 <!--endregion-->
