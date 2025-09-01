@@ -279,6 +279,10 @@
                         <archiveDir>${project.build.finalName}_${current.time}</archiveDir>
                         <!--suppress UnresolvedMavenProperty 自定义自解压包的名称-->
                         <fileName>${project.build.finalName}_${current.time}.run</fileName>
+
+                        <!-- 保持所有文件权限 -->
+                        <tarExtraOpt>--preserve-permissions</tarExtraOpt>
+                        <untarExtraOpt>--preserve-permissions</untarExtraOpt>
                     </configuration>
                     <executions>
                         <execution>
