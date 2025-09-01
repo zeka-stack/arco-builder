@@ -281,8 +281,8 @@
                         <fileName>${project.build.finalName}_${current.time}.run</fileName>
 
                         <!-- 保持所有文件权限 -->
-                        <tarExtraOpt>--preserve-permissions</tarExtraOpt>
-                        <untarExtraOpt>--preserve-permissions</untarExtraOpt>
+                        <tarExtraOpt>-p</tarExtraOpt>
+                        <untarExtraOpt>-p</untarExtraOpt>
                     </configuration>
                     <executions>
                         <execution>
