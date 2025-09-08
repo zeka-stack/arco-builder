@@ -29,19 +29,132 @@ arco-supreme (全局基础父项目)
 
 ### 模块职责
 
-| 模块 | 职责 | 特点 |
-|------|------|------|
-| `arco-builder` | 项目构建总控层 | 继承 arco-supreme，定义两大子模块 |
-| `arco-dependencies-parent` | 依赖管理中枢 | 统一管理第三方依赖版本 |
-| `arco-project-dependencies` | 插件与构建配置聚合 | 集成代码质量检查、测试覆盖率等插件 |
-| `arco-project-builder` | 构建逻辑抽象层 | 提供基础依赖和插件配置 |
-| `arco-business-parent` | 业务型父级 | 支持复杂部署需求，包含打包、脚本生成等 |
-| `arco-component-parent` | 组件型父级 | 轻量级，适合 SDK 或框架组件 |
-| `arco-distribution-parent` | 一键部署层 | 提供业务和文档的部署包管理 |
+| 模块                          | 职责        | 特点                      |
+|-----------------------------|-----------|-------------------------|
+| `arco-builder`              | 项目构建总控层   | 继承 arco-supreme，定义两大子模块 |
+| `arco-dependencies-parent`  | 依赖管理中枢    | 统一管理第三方依赖版本             |
+| `arco-project-dependencies` | 插件与构建配置聚合 | 集成代码质量检查、测试覆盖率等插件       |
+| `arco-project-builder`      | 构建逻辑抽象层   | 提供基础依赖和插件配置             |
+| `arco-business-parent`      | 业务型父级     | 支持复杂部署需求，包含打包、脚本生成等     |
+| `arco-component-parent`     | 组件型父级     | 轻量级，适合 SDK 或框架组件        |
+| `arco-distribution-parent`  | 一键部署层     | 提供业务和文档的版本化部署管理         |
 
 ## 🎯 设计理念
 
-### 1. 分层管理，职责清晰
+### 1. 约定大于配置（Convention over Configuration）
+
+**核心理念**：提供开箱即用的默认配置，用户无需任何配置即可使用，但支持按需覆盖。
+
+**实现方式**：
+
+- 预配置所有必要的 Maven 插件，包括代码质量检查、打包、部署等
+- 提供合理的默认值，如编码格式、JDK 版本、资源过滤规则等
+- 支持用户通过 `<properties>` 或直接配置覆盖默认行为
+
+**示例**：
+
+```xml
+<!-- 无需配置，直接使用默认的代码质量检查 -->
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-checkstyle-plugin</artifactId>
+    <!-- 框架已预配置，开箱即用 -->
+</plugin>
+
+<!-- 如需自定义，直接覆盖配置 -->
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-checkstyle-plugin</artifactId>
+    <configuration>
+        <skip>true</skip> <!-- 跳过检查 -->
+    </configuration>
+</plugin>
+```
+
+### 2. 智能依赖管理
+
+**核心理念**：通过 `dependencyManagement` 提供智能的依赖版本管理，解决常见的依赖冲突问题。
+
+**关键策略**：
+
+#### 日志框架统一管理
+
+```xml
+<!-- 全局排除默认的 logback，强制使用 Log4j2 -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-logging</artifactId>
+    <exclusions>
+        <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+<!-- 统一使用 Log4j2 -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-log4j2</artifactId>
+</dependency>
+```
+
+#### Web 服务器选择
+
+```xml
+<!-- 排除默认的 Tomcat，支持用户选择其他服务器 -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+    <exclusions>
+        <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+```
+
+**优势**：
+
+- 避免 "发现多个 slf4j 实现类" 等常见问题
+- 统一技术栈选择，减少团队分歧
+- 支持用户按需引入其他实现
+
+### 3. 文档与代码版本同步
+
+**核心理念**：文档应该跟着代码走，确保文档的准确性和时效性。
+
+**实现方式**：
+
+- 提供 `arco-doc-distribution` 模块，支持文档的版本化部署
+- 建议在项目中创建 `docs/` 目录，按版本号分目录管理文档
+- 数据库脚本、API 文档等都应该与代码版本保持同步
+
+**推荐目录结构**：
+
+```
+my-project/
+├── docs/
+│   ├── 1.0.0/
+│   │   ├── api-docs/
+│   │   ├── user-guide/
+│   │   └── database/
+│   │       ├── schema.sql
+│   │       └── data.sql
+│   └── 2.0.0/
+│       ├── api-docs/
+│       └── migration-guide/
+├── src/
+└── pom.xml
+```
+
+**优势**：
+
+- 文档与代码版本一一对应，避免版本混乱
+- 便于回滚和版本比较
+- 支持自动化文档部署
+
+### 4. 分层管理，职责清晰
 
 通过多层 parent 结构，将不同层级的职责进行明确划分：
 
@@ -50,14 +163,14 @@ arco-supreme (全局基础父项目)
 - **插件层**：构建插件配置和代码质量检查
 - **业务层**：针对不同项目类型的定制化配置
 
-### 2. 差异化配置，灵活扩展
+### 5. 差异化配置，灵活扩展
 
 针对不同类型的项目提供专门的 parent：
 
 - **业务型项目**：支持复杂的打包需求，包含启动脚本、Docker 支持等
 - **组件型项目**：轻量级配置，专注于框架组件和 SDK 开发
 
-### 3. 统一规范，集中维护
+### 6. 统一规范，集中维护
 
 所有子项目共享统一的构建规范，避免重复配置，提高可维护性。
 
@@ -141,6 +254,14 @@ arco-supreme (全局基础父项目)
 - 支持 Docker 容器化
 - 提供资源文件过滤
 
+**约定大于配置特性**：
+
+- **开箱即用**：无需任何配置即可获得完整的构建能力
+- **智能打包**：自动生成 tar.gz 和自解压包，支持时间戳命名
+- **启动脚本**：自动生成 Linux/Windows 启动脚本，支持自定义 JVM 参数
+- **Docker 支持**：通过 `-P docker` 启用，自动生成 Dockerfile 和分层打包
+- **资源过滤**：自动处理配置文件，支持环境变量替换
+
 **关键插件**：
 - `maven-assembly-plugin`：打包部署包
 - `arco-script-maven-plugin`：生成启动脚本
@@ -178,10 +299,56 @@ arco-supreme (全局基础父项目)
 - 支持源码打包（可选）
 - 简化的资源处理
 
+**约定大于配置特性**：
+
+- **轻量级**：专注于框架组件开发，避免不必要的打包配置
+- **源码可选**：默认不打包源码，通过 `-P source` 按需启用
+- **简化资源**：自动处理资源文件，支持过滤和排除规则
+- **开箱即用**：继承所有基础功能，无需额外配置
+
 **关键特性**：
 - 默认不打包源码，可通过 `-P source` 启用
 - 简化的资源文件处理
 - 专注于框架组件开发
+
+### arco-doc-distribution
+
+**职责**：文档版本化部署管理
+
+**核心功能**：
+
+- 支持文档的版本化部署
+- 确保文档与代码版本同步
+- 提供文档发布和回滚能力
+
+**设计理念**：
+
+- **文档跟随代码**：文档应该与代码版本保持同步，确保准确性
+- **版本化管理**：按版本号分目录管理文档，便于版本控制和回滚
+- **自动化部署**：支持文档的自动化部署和发布
+
+**推荐实践**：
+
+```
+docs/
+├── 1.0.0/
+│   ├── api-docs/          # API 文档
+│   ├── user-guide/        # 用户指南
+│   └── database/          # 数据库脚本
+│       ├── schema.sql
+│       └── migration/
+└── 2.0.0/
+    ├── api-docs/
+    ├── migration-guide/   # 迁移指南
+    └── breaking-changes.md
+```
+
+**优势**：
+
+- 文档与代码版本一一对应，避免版本混乱
+- 支持历史版本查看和回滚
+- 便于团队协作和知识管理
+- 支持自动化文档部署
 
 ## 🚀 使用指南
 
@@ -328,6 +495,16 @@ export MVN_CENTRAL_PASSWORD=your_central_password
 ```
 my-project/
 ├── pom.xml (使用 arco-business-parent 或 arco-component-parent)
+├── docs/ (文档版本化管理)
+│   ├── 1.0.0/
+│   │   ├── api-docs/
+│   │   ├── user-guide/
+│   │   └── database/
+│   │       ├── schema.sql
+│   │       └── data.sql
+│   └── 2.0.0/
+│       ├── api-docs/
+│       └── migration-guide/
 ├── src/
 │   ├── main/
 │   │   ├── java/
@@ -338,17 +515,107 @@ my-project/
 └── bin/launcher (自定义启动脚本，可选)
 ```
 
-### 2. 依赖管理建议
+### 2. 约定大于配置实践
+
+#### 开箱即用
+
+```xml
+<!-- 无需任何配置，框架自动提供 -->
+<parent>
+    <groupId>dev.dong4j</groupId>
+    <artifactId>arco-business-parent</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+</parent>
+
+<!-- 自动获得以下功能： -->
+<!-- 1. 代码质量检查 (Checkstyle + PMD) -->
+<!-- 2. 测试覆盖率分析 (JaCoCo) -->
+<!-- 3. 自动打包 (tar.gz + 自解压包) -->
+<!-- 4. 启动脚本生成 -->
+<!-- 5. Docker 支持 -->
+<!-- 6. 资源文件过滤 -->
+```
+
+#### 按需覆盖
+
+```xml
+<properties>
+    <!-- 跳过代码质量检查 -->
+    <checkstyle.skip>true</checkstyle.skip>
+    <pmd.skip>true</pmd.skip>
+
+    <!-- 自定义包名 -->
+    <package.name>my-custom-app</package.name>
+
+    <!-- 跳过测试 -->
+    <maven.test.skip>true</maven.test.skip>
+</properties>
+
+<!-- 或者直接覆盖插件配置 -->
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <configuration>
+                <skip>true</skip>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+
+### 3. 依赖管理建议
 
 - 优先使用 `dependencyManagement` 中定义的版本
 - 避免在子项目中重复定义版本
 - 使用 `provided` 作用域管理编译时依赖
+- 利用框架的智能依赖管理，避免常见冲突
 
-### 3. 构建优化建议
+### 4. 文档版本化管理
+
+#### 目录结构
+
+```
+docs/
+├── 1.0.0/
+│   ├── api-docs/
+│   │   ├── swagger.json
+│   │   └── postman-collection.json
+│   ├── user-guide/
+│   │   ├── installation.md
+│   │   └── configuration.md
+│   └── database/
+│       ├── schema.sql
+│       ├── data.sql
+│       └── migration/
+│           └── 001_initial_schema.sql
+└── 2.0.0/
+    ├── api-docs/
+    ├── migration-guide/
+    └── breaking-changes.md
+```
+
+#### 版本同步策略
+
+- 每次发布新版本时，在 `docs/` 下创建对应的版本目录
+- 数据库脚本按版本号命名，便于回滚
+- API 文档与代码版本保持同步
+- 使用 `arco-doc-distribution` 进行文档部署
+
+### 5. 构建优化建议
 
 - 合理使用 Maven Profile 进行环境区分
 - 利用增量编译提高构建速度
 - 定期更新依赖版本
+- 利用框架的约定配置，减少自定义配置
+
+### 6. 团队协作建议
+
+- 统一使用框架提供的默认配置
+- 通过代码审查确保配置一致性
+- 定期同步依赖版本更新
+- 建立文档更新流程，确保与代码版本同步
 
 ## 🤝 贡献指南
 
