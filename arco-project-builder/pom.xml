@@ -41,7 +41,7 @@
         <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
         <maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
 
-        <maven-checkstyle-plugin.version>3.1.1</maven-checkstyle-plugin.version>
+        <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
         <maven-pmd-plugin.version>3.21.2</maven-pmd-plugin.version>
 
         <mapstruct.version>1.4.2.Final</mapstruct.version>
@@ -361,7 +361,6 @@
                         <configLocation>zeka-stack-checks.xml</configLocation>
                         <suppressionsLocation>suppressions.xml</suppressionsLocation>
                         <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
-                        <encoding>${project.build.sourceEncoding}</encoding>
                         <consoleOutput>true</consoleOutput>
                         <failOnViolation>true</failOnViolation>
                         <cacheFile>${project.build.directory}/checkstyle/checkstyle-cachefile</cacheFile>
