@@ -385,7 +385,7 @@
                         <includes>dev/dong4j\/**\/*.java</includes>
                         <excludes>dev/dong4j/kernel/generator\/**\/*.java</excludes>
                         <linkXRef>false</linkXRef>
-                        <printFailingErrors>true</printFailingErrors>
+                        <printFailingErrors>false</printFailingErrors>
                         <rulesets>
                             <ruleset>rulesets/zeka-stack-comment.xml</ruleset>
                             <ruleset>rulesets/zeka-stack-concurrent.xml</ruleset>
@@ -438,6 +438,11 @@
                             <groupId>dev.dong4j</groupId>
                             <artifactId>arco-pmd-plugin-rule</artifactId>
                             <version>${arco-maven-plugin.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>jakarta.servlet</groupId>
+                            <artifactId>jakarta.servlet-api</artifactId>
+                            <version>6.0.0</version>
                         </dependency>
                     </dependencies>
                 </plugin>
