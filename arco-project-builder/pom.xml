@@ -354,7 +354,7 @@
                         <configLocation>zeka-stack-checks.xml</configLocation>
                         <suppressionsLocation>suppressions.xml</suppressionsLocation>
                         <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
-                        <consoleOutput>true</consoleOutput>
+                        <consoleOutput>false</consoleOutput>
                         <failOnViolation>true</failOnViolation>
                         <cacheFile>${project.build.directory}/checkstyle/checkstyle-cachefile</cacheFile>
                         <outputFile>${project.build.directory}/checkstyle/checkstyle-result.xml</outputFile>
