@@ -161,7 +161,7 @@ arco-project-builder (构建逻辑抽象层) ← 当前模块
 
 ## 🔗 相关链接
 
-- [[arco-builder/index|构建框架总览]]
-- [[arco-builder/arco-business-parent|业务型项目父级]]
-- [[arco-builder/arco-component-parent|组件型项目父级]]
-- [[arco-builder/arco-project-dependencies|插件配置聚合]]
+- [[arco-meta/arco-builder/index|构建框架总览]]
+- [[arco-meta/arco-builder/arco-business-parent|业务型项目父级]]
+- [[arco-meta/arco-builder/arco-component-parent|组件型项目父级]]
+- [[arco-meta/arco-builder/arco-project-dependencies|插件配置聚合]]

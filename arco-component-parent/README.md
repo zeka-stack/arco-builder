@@ -155,7 +155,7 @@ mvn clean package -P source
 
 ## 🔗 相关链接
 
-- [[arco-builder/index|构建框架总览]]
-- [[arco-builder/arco-business-parent|业务型项目父级]]
-- [[arco-builder/arco-project-builder|构建逻辑抽象层]]
+- [[arco-meta/arco-builder/index|构建框架总览]]
+- [[arco-meta/arco-builder/arco-business-parent|业务型项目父级]]
+- [[arco-meta/arco-builder/arco-project-builder|构建逻辑抽象层]]
 

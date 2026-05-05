@@ -151,6 +151,6 @@ mvn clean deploy -Dpublish.switch=true -Dpublish.env=prod
 
 ## 🔗 相关链接
 
-- [[arco-builder/index|构建框架总览]]
-- [[arco-builder/arco-distribution-parent/arco-business-distribution|业务项目部署]]
-- [[arco-builder/arco-distribution-parent/arco-doc-distribution|文档部署]]
+- [[arco-meta/arco-builder/index|构建框架总览]]
+- [[arco-meta/arco-builder/arco-distribution-parent/arco-business-distribution|业务项目部署]]
+- [[arco-meta/arco-builder/arco-distribution-parent/arco-doc-distribution|文档部署]]

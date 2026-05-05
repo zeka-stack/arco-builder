@@ -178,6 +178,6 @@ arco-supreme (全局基础)
 
 ## 🔗 相关链接
 
-- [[arco-builder/index|构建框架总览]]
-- [[arco-builder/arco-project-dependencies|插件配置聚合]]
-- [[arco-builder/arco-project-builder|构建逻辑抽象层]]
+- [[arco-meta/arco-builder/index|构建框架总览]]
+- [[arco-meta/arco-builder/arco-project-dependencies|插件配置聚合]]
+- [[arco-meta/arco-builder/arco-project-builder|构建逻辑抽象层]]

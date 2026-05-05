@@ -140,6 +140,6 @@ mvn dependency:tree
 
 ## 🔗 相关链接
 
-- [[arco-builder/index|构建框架总览]]
-- [[arco-builder/arco-dependencies-parent|依赖管理中枢]]
-- [[arco-builder/arco-project-builder|构建逻辑抽象层]]
+- [[arco-meta/arco-builder/index|构建框架总览]]
+- [[arco-meta/arco-builder/arco-dependencies-parent|依赖管理中枢]]
+- [[arco-meta/arco-builder/arco-project-builder|构建逻辑抽象层]]

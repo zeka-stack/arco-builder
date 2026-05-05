@@ -223,5 +223,5 @@ mvn clean package
 
 ## 🔗 相关链接
 
-- [[arco-builder/arco-distribution-parent|部署层总览]]
-- [[arco-maven-plugin/arco-publish-maven-plugin|部署插件详情]]
+- [[arco-meta/arco-builder/arco-distribution-parent/index|部署层总览]]
+- [[arco-meta/arco-maven-plugin/arco-publish-maven-plugin|部署插件详情]]
