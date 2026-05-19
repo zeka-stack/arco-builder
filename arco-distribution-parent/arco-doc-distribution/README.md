@@ -48,7 +48,7 @@ published: 2022.01.13
 <parent>
     <groupId>dev.dong4j</groupId>
     <artifactId>arco-doc-distribution</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
 </parent>
 
 <artifactId>my-project-docs</artifactId>

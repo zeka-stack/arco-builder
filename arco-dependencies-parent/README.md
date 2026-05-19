@@ -96,7 +96,7 @@ arco-supreme (全局基础)
 <parent>
     <groupId>dev.dong4j</groupId>
     <artifactId>arco-dependencies-parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <relativePath/>
 </parent>
 ```

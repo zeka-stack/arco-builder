@@ -12,7 +12,8 @@ published: 2022.01.02
 
 ## 📖 简介
 
-`arco-builder` 是 Zeka.Stack 生态中的项目构建管理框架，基于 Maven 的多层 parent 设计，为不同类型的项目提供统一的构建配置和依赖管理。它继承自 `arco-supreme`，是整个 Zeka.Stack 构建体系的核心组件。
+`arco-builder` 是 Zeka.Stack 生态中的项目构建管理框架，基于 Maven 的多层 parent 设计，为不同类型的项目提供统一的构建配置和依赖管理。它继承自
+`arco-supreme`，是整个 Zeka.Stack 构建体系的核心组件。
 
 ## 🏗️ 架构设计
 
@@ -185,12 +186,14 @@ my-project/
 **职责**：统一管理第三方依赖版本
 
 **核心功能**：
+
 - 管理 Spring Boot 及其生态依赖版本
 - 统一日志框架配置（Log4j2）
 - 管理 Spring Cloud 和 Spring Cloud Alibaba 版本
 - 提供依赖版本冲突解决方案
 
 **关键配置**：
+
 ```xml
 <dependencyManagement>
     <dependencies>
@@ -222,12 +225,14 @@ my-project/
 **职责**：插件与构建配置聚合
 
 **核心功能**：
+
 - 集成代码质量检查插件（Checkstyle、PMD）
 - 配置测试覆盖率分析（JaCoCo）
 - 管理 Git 提交信息记录
 - 提供依赖冲突检测
 
 **关键插件**：
+
 - `maven-checkstyle-plugin`：代码风格检查
 - `maven-pmd-plugin`：代码质量分析
 - `jacoco-maven-plugin`：测试覆盖率
@@ -238,12 +243,14 @@ my-project/
 **职责**：构建逻辑抽象层
 
 **核心功能**：
+
 - 提供基础依赖（Lombok、JUnit、SLF4J）
 - 配置注解处理器路径
 - 集成自定义 Maven 插件
 - 提供编译优化配置
 
 **关键特性**：
+
 - 支持 Lombok + MapStruct 组合使用
 - 集成自定义注解处理器
 - 优化编译参数，支持 JDK 模块化
@@ -253,6 +260,7 @@ my-project/
 **职责**：业务型项目构建配置
 
 **核心功能**：
+
 - 支持复杂打包需求（tar.gz、自解压包）
 - 自动生成启动脚本
 - 支持 Docker 容器化
@@ -267,12 +275,14 @@ my-project/
 - **资源过滤**：自动处理配置文件，支持环境变量替换
 
 **关键插件**：
+
 - `maven-assembly-plugin`：打包部署包
 - `arco-script-maven-plugin`：生成启动脚本
 - `arco-container-maven-plugin`：Docker 支持
 - `arco-makeself-maven-plugin`：生成自解压包
 
 **资源处理**：
+
 ```xml
 <resources>
     <resource>
@@ -299,6 +309,7 @@ my-project/
 **职责**：组件型项目构建配置
 
 **核心功能**：
+
 - 轻量级配置，适合 SDK 开发
 - 支持源码打包（可选）
 - 简化的资源处理
@@ -311,6 +322,7 @@ my-project/
 - **开箱即用**：继承所有基础功能，无需额外配置
 
 **关键特性**：
+
 - 默认不打包源码，可通过 `-P source` 启用
 - 简化的资源文件处理
 - 专注于框架组件开发
@@ -364,7 +376,7 @@ docs/
 <parent>
     <groupId>dev.dong4j</groupId>
     <artifactId>arco-business-parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <relativePath/>
 </parent>
 
@@ -373,6 +385,7 @@ docs/
 ```
 
 **特性**：
+
 - 自动生成启动脚本
 - 支持 Docker 容器化
 - 提供完整的部署包
@@ -386,7 +399,7 @@ docs/
 <parent>
     <groupId>dev.dong4j</groupId>
     <artifactId>arco-component-parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <relativePath/>
 </parent>
 
@@ -395,6 +408,7 @@ docs/
 ```
 
 **特性**：
+
 - 轻量级配置
 - 可选源码打包
 - 适合框架组件开发
@@ -420,17 +434,20 @@ docs/
 ### 4. 构建命令
 
 **基础构建**：
+
 ```bash
 mvn clean compile
 mvn clean package
 ```
 
 **包含源码打包**（仅组件型项目）：
+
 ```bash
 mvn clean package -P source
 ```
 
 **Docker 支持**（仅业务型项目）：
+
 ```bash
 mvn clean package -P docker
 ```
@@ -473,21 +490,25 @@ export MVN_CENTRAL_PASSWORD=your_central_password
 ## 🎨 设计优势
 
 ### 1. 统一性
+
 - 所有项目使用相同的构建规范
 - 统一的依赖版本管理
 - 一致的代码质量检查标准
 
 ### 2. 灵活性
+
 - 支持不同类型的项目需求
 - 可选的插件和功能
 - 易于扩展和定制
 
 ### 3. 可维护性
+
 - 集中式配置管理
 - 清晰的模块职责划分
 - 减少重复配置
 
 ### 4. 可扩展性
+
 - 支持自定义 Maven 插件
 - 易于添加新的项目类型
 - 支持多种部署方式
@@ -528,7 +549,7 @@ my-project/
 <parent>
     <groupId>dev.dong4j</groupId>
     <artifactId>arco-business-parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
 </parent>
 
 <!-- 自动获得以下功能： -->

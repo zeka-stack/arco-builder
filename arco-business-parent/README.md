@@ -51,7 +51,7 @@ published: 2022.01.10
 <parent>
     <groupId>dev.dong4j</groupId>
     <artifactId>arco-business-parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <relativePath/>
 </parent>
 
@@ -145,7 +145,7 @@ mkdir -p bin
 <parent>
     <groupId>dev.dong4j</groupId>
     <artifactId>arco-business-parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
 </parent>
 
 <artifactId>user-service</artifactId>

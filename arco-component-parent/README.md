@@ -49,7 +49,7 @@ published: 2022.01.17
 <parent>
     <groupId>dev.dong4j</groupId>
     <artifactId>arco-component-parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <relativePath/>
 </parent>
 
@@ -109,7 +109,7 @@ mvn clean package -P source
 <parent>
     <groupId>dev.dong4j</groupId>
     <artifactId>arco-component-parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
 </parent>
 
 <artifactId>my-utils</artifactId>
@@ -122,7 +122,7 @@ mvn clean package -P source
 <parent>
     <groupId>dev.dong4j</groupId>
     <artifactId>arco-component-parent</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
 </parent>
 
 <artifactId>my-sdk</artifactId>
